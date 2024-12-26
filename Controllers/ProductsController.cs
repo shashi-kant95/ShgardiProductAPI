@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,9 +19,11 @@ namespace ShgardiProductAPI.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly DBContext _dbContext;
-        public ProductsController(DBContext dBContext)
+        private readonly ILogger<ProductsController> _logger;
+        public ProductsController(DBContext dBContext, ILogger<ProductsController> logger)
         {
             _dbContext = dBContext;
+            _logger = logger;
         }
 
         // GET: api/Products
@@ -34,6 +37,7 @@ namespace ShgardiProductAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while fetching Products");
                 return StatusCode(500, "Server Error: " + ex.Message);
             }
         }
@@ -51,12 +55,14 @@ namespace ShgardiProductAPI.Controllers
                 var prod = await _dbContext.Products.FindAsync(id);
                 if (prod == null)
                 {
+                    _logger.LogInformation("No Product found with ID {Id} while fetching", id);
                     return NotFound("No Record Found");
                 }
                 return prod;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while fetching Product with ID {Id}", id);
                 return StatusCode(500, "Server Error: " + ex.Message);
             }
         }
@@ -74,6 +80,7 @@ namespace ShgardiProductAPI.Controllers
                 var existingProduct = await _dbContext.Products.FindAsync(id);
                 if (existingProduct == null)
                 {
+                    _logger.LogInformation("No Product with ID {Id} while updating", id);
                     return NotFound($"Product with ID {id} not found.");
                 }
                 // Update properties
@@ -86,6 +93,7 @@ namespace ShgardiProductAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while updating Product with ID {Id}", id);
                 return StatusCode(500, "Server Error: " + ex.Message);
             }
         }
@@ -102,6 +110,7 @@ namespace ShgardiProductAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while Adding Product {val}", JsonSerializer.Serialize(product));
                 return StatusCode(500, "Server Error: " + ex.Message);
             }
         }
@@ -115,6 +124,7 @@ namespace ShgardiProductAPI.Controllers
                 var prod = await _dbContext.Products.Where(p => p.Id == id).FirstOrDefaultAsync();
                 if (prod == null)
                 {
+                    _logger.LogInformation("No Product with ID {Id} while deleting", id);
                     return NotFound("No Record Found");
                 }
                 _dbContext.Products.Remove(prod);
@@ -124,6 +134,7 @@ namespace ShgardiProductAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while deleting Product {id}", id);
                 return StatusCode(500, "Server Error: " + ex.Message);
             }
         }
