@@ -28,7 +28,7 @@ namespace ShgardiProductAPI.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts() //Returns all products from Product table, currently there are no limits set
         {
             try
             {
@@ -44,15 +44,15 @@ namespace ShgardiProductAPI.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}", Name = "GetProduct")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<Product>> GetProduct(int id) // will return the product with given id from product table
         {
             try
             {
-                if (id == null)
-                {
-                    return BadRequest("Id is required");
-                }
-                var prod = await _dbContext.Products.FindAsync(id);
+                // if (id == null) // id will never be null
+                // {
+                //     return BadRequest("Id is required");
+                // }
+                var prod = await _dbContext.Products.FindAsync(id); // FindAsync will search based on primary key id
                 if (prod == null)
                 {
                     _logger.LogInformation("No Product found with ID {Id} while fetching", id);
@@ -69,16 +69,16 @@ namespace ShgardiProductAPI.Controllers
 
         // PUT: api/Products/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, [FromBody] Product product)
+        public async Task<IActionResult> PutProduct(int id, [FromBody] Product product) // update the Name, Desc, and Price
         {
             try
             {
-                if (id != product.Id)
+                if (id != product.Id) // id needs to be same
                 {
                     return BadRequest("Invalid Input");
                 }
                 var existingProduct = await _dbContext.Products.FindAsync(id);
-                if (existingProduct == null)
+                if (existingProduct == null) // No record found with given id
                 {
                     _logger.LogInformation("No Product with ID {Id} while updating", id);
                     return NotFound($"Product with ID {id} not found.");
@@ -100,13 +100,13 @@ namespace ShgardiProductAPI.Controllers
 
         // POST: api/Products
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct([FromBody] Product product)
+        public async Task<ActionResult<Product>> PostProduct([FromBody] Product product) // Add record to table, Id will be incremental
         {
             try
             {
                 _dbContext.Products.Add(product);
                 await _dbContext.SaveChangesAsync();
-                return CreatedAtRoute("GetProduct", new { id = product.Id }, product);
+                return CreatedAtRoute("GetProduct", new { id = product.Id }, product); // return a path to access newly added product
             }
             catch (Exception ex)
             {
@@ -117,12 +117,12 @@ namespace ShgardiProductAPI.Controllers
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct(int id) // Hard delete the record, It won't keep record in table
         {
             try
             {
                 var prod = await _dbContext.Products.Where(p => p.Id == id).FirstOrDefaultAsync();
-                if (prod == null)
+                if (prod == null) // no record
                 {
                     _logger.LogInformation("No Product with ID {Id} while deleting", id);
                     return NotFound("No Record Found");
