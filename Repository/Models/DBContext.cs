@@ -1,10 +1,12 @@
+using Microsoft;
 using Microsoft.EntityFrameworkCore;
+using ShgardiProductAPI.Repository.Models;
 
-namespace ProductApi.Data
+namespace ProductApi.Repository.Models
 {
-    public class ProductDbContext : DbContext
+    public class DBContext : DbContext
     {
-        public ProductDbContext(DbContextOptions<ProductDbContext> options) : base(options)
+        public DBContext(DbContextOptions<DBContext> options) : base(options)
         { }
 
         public DbSet<Product> Products { get; set; }
