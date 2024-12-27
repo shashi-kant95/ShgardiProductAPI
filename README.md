@@ -18,7 +18,7 @@ This is a simple REST API built with ASP.NET Core 8 for managing "Products." The
 
    1. Clone the Repository
       git clone https://github.com/shashi-kant95/ShgardiProductAPI.git
-      cd ProductAPI
+      cd ShgardiProductAPI
    2. Install Dependencies
       dotnet restore
    3. Apply Migrations
