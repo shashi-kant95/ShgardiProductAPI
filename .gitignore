@@ -46,10 +46,6 @@ logs/
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 
-# Config files
-appsettings*.json
-!appsettings.json  # Keep base appsettings file in version control
-
 # Generated files
 wwwroot/
 dist/
